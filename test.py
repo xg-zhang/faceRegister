@@ -2,6 +2,8 @@ import api
 import cv2
 import sqlite3
 
+from font.fontToImg import cv2ImgAddText
+
 conn = sqlite3.connect('data.sqlite')
 c = conn.cursor()
 print('数据库开启成功')
@@ -23,7 +25,7 @@ video_capture = cv2.VideoCapture(0)
 known_face_names = []
 known_face_encodings = []
 for i, j in cursor:
-    print(i,j)
+    # print(i,j)
     if j != None:
         known_face_names.append(i)
         known_face_encodings.append(eval(j))
@@ -56,7 +58,7 @@ while True:
         for face_encoding in face_encodings:
             # See if the face is a match for the known face(s)
             matches = api.compare_faces(known_face_encodings, face_encoding)
-            name = "Unknown"
+            name = "无匹配"
 
             # If a match was found in known_face_encodings, just use the first one.
             if True in matches:
@@ -79,9 +81,10 @@ while True:
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
         # Draw a label with a name below the face
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-        font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255))
+        # font = cv2.FONT_HERSHEY_DUPLEX
+        # cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+        frame = cv2ImgAddText(frame, name, left + 60, bottom - 30, (255, 0, 0), 30)
 
     # Display the resulting image
     cv2.imshow('Video', frame)
