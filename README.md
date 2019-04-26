@@ -1,4 +1,4 @@
-# StudentBMS
+# 毕业设计：基于深度学习的人脸识别签到系统的设计与实现
 ## 准备：
 1. 安装virtualenv:
 `pip install virtualenv`
