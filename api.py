@@ -71,21 +71,6 @@ def _raw_face_locations(img, number_of_times_to_sample=1, model='hog'):
     # rectangles[[(52, 66) (114, 129)]]
 
 
-def _raw_face_locations(img, number_of_times_to_upsample=1, model="hog"):
-    """
-        返回图像中人脸边界框的数组
-    :param img:一个图像（作为一个numpy数组）
-    :param number_of_times_to_upsample:对图像进行上采样以查找面部的次数。数字越大，面部越小。
-    :param model:使用哪种人脸检测模型。“hog”不太准确，但在CPU上更快。“cnn”更准确
-                  深度学习模型，GPU / CUDA加速（如果可用）。默认为“hog”。
-    :return:找到的面部位置的dlib'rect'对象列表
-    """
-    if model == "cnn":
-        return cnn_face_detector(img, number_of_times_to_upsample)
-    else:
-        return face_detector(img, number_of_times_to_upsample)
-
-
 def face_locations(img, number_of_times_to_sample=1, model='hog'):
     if model == 'cnn':
         return [_trim_css_to_bounds(_rect_to_css(face.rect), img.shape) for face in
@@ -118,7 +103,7 @@ def face_encodings(face_image, known_face_locations=None, num=1):
     :param known_face_locations: 已认识的脸部位置
     :param num: 计算编码时重新采样的次数，越大越准确也越慢
     """
-    raw_landmarks = _raw_face_landmarks(face_image, known_face_locations, model='small')
+    raw_landmarks = _raw_face_landmarks(face_image, known_face_locations, model='large')
     return [np.array(face_encoder.compute_face_descriptor(face_image, raw_landmarks_set, num)) for raw_landmarks_set in
             raw_landmarks]
 
@@ -136,7 +121,7 @@ def face_distance(face_encoding, face_to_compare):
     return np.linalg.norm(face_encoding - face_to_compare, axis=1)
 
 
-def compare_faces(known_face_encodings, face_encoding_to_check, tolerence=0.6):
+def compare_faces(known_face_encodings, face_encoding_to_check, tolerence=0.5):
     """
      将面部编码列表与候选编码进行比较，看它们是否匹配。
     :param known_face_encodings:已知面部编码的列表
