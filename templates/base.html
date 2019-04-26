@@ -1,0 +1,53 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}ManageSys{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-default navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('.index') }}">主页</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+            {% if current_user.is_authenticated %}
+                <li>
+                <a href="{{ url_for('index') }}">{{ current_user.username }}</a>
+                </li>
+                <li>
+                <a href="{{ url_for('.logout') }}">注销 <span class="glyphicon glyphicon-off"></span></a>
+                </li>
+            {% else %}
+                <li>
+                <a href="{{ url_for('.login') }}">登录</a>
+                </li>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
